@@ -41,7 +41,8 @@ dependencies {
 	implementation group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-springsecurity5'
 
 	// https://mvnrepository.com/artifact/com.querydsl/querydsl-jpa
-	implementation group: 'com.querydsl', name: 'querydsl-jpa'
+	implementation group: 'com.querydsl', name: 'querydsl-jpa', version: '4.2.1'
+
 
 	// https://mvnrepository.com/artifact/net.coobird/thumbnailator
 	implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.14'

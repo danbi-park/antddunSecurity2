@@ -6,6 +6,7 @@ import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.security.Timestamp;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,6 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Data
 @ToString
 public class Member {
 
@@ -25,6 +27,9 @@ public class Member {
     private String name;
     private String password;
     private String role;
+
+    @CreationTimestamp
+    private LocalDateTime createDateTime;
 
 /*    private boolean fromSocial;
 

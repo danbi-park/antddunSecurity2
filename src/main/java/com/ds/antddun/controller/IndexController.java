@@ -1,6 +1,9 @@
 package com.ds.antddun.controller;
 
 import com.ds.antddun.entity.Member;
+import com.ds.antddun.repository.MemberRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,6 +13,11 @@ import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class IndexController {
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     //localhost:8080/
     //localhost:8080
@@ -47,12 +55,16 @@ public class IndexController {
     }
 
     @PostMapping("/join")
-    public @ResponseBody String join(Member member, HttpServletRequest http){
+    public String join(Member member){
 
-        String email = http.getParameter("email");
-        System.out.println(email);
-        System.out.println(member);
-        return "join";
+        member.setRole("ROLE_USER");
+
+        String rawPassword = member.getPassword();
+        String encPassword = bCryptPasswordEncoder.encode(rawPassword);
+        member.setPassword(encPassword);
+
+        memberRepository.save(member);
+        return "redirect:/loginForm"; //
     }
 
 
