@@ -28,6 +28,10 @@ public class Member {
     private String password;
     private String role;
 
+    //구글 로그인 위함 / 그냥 로그인을 구분하기 위해
+    private String provider;
+    private String providerId;
+
     @CreationTimestamp
     private LocalDateTime createDateTime;
 

@@ -1,8 +1,12 @@
 package com.ds.antddun.controller;
 
+import com.ds.antddun.config.auth.PrincipalDetails;
 import com.ds.antddun.entity.Member;
 import com.ds.antddun.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +22,15 @@ public class IndexController {
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @GetMapping("/test/login")
+    public @ResponseBody String testLogin(Authentication authentication){
+        System.out.println("/test/login ===========");
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        System.out.println("authentication" + principalDetails);
+        return "세션 정보 확인하기";
+
+    }
 
     //localhost:8080/
     //localhost:8080
@@ -35,7 +48,7 @@ public class IndexController {
 
     @GetMapping("/admin")
     public @ResponseBody String admin(){
-        return "adminddddddd";
+        return "admin";
     }
 
     @GetMapping("/manager")
@@ -66,6 +79,24 @@ public class IndexController {
         memberRepository.save(member);
         return "redirect:/loginForm"; //
     }
+
+
+    //config에서 말고 특정매서드에 간단히 걸고 싶을 때 config에 @EnableGlobalMethodSecurity(securedEnabled = true) 설정하고
+    @Secured("ROLE_ADMIN")
+    @GetMapping("/info")
+    public @ResponseBody String info(){
+        return "개인 정보";
+    }
+
+
+    // data가 실행되기 직전에 실행됨 hasRole 과 같이 쓸 수 있고 여러 role 설정 가능, 위와 같이 config에 설정
+    @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
+    @GetMapping("/data")
+    public @ResponseBody String data(){
+        return "데이터 정보";
+    }
+
+
 
 
 }
