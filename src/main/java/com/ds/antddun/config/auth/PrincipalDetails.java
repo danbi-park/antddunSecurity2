@@ -9,19 +9,32 @@ package com.ds.antddun.config.auth;
 // 그리고 여기에 유저 정보를 저장할 떼 타입이 UserDetails(PrincipalDetails)여야함
 
 import com.ds.antddun.entity.Member;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
-public class PrincipalDetails implements UserDetails {
+@Data //getter 역할
+public class PrincipalDetails implements UserDetails, OAuth2User {
 
     private Member member; //콤포지션
+    private Map<String, Object> attributes;
 
+    //일반 로그인
     public PrincipalDetails(Member member) {
         this.member = member;
     }
+
+    //OAuth 로그인
+    public PrincipalDetails(Member member, Map<String, Object> attributes) {
+        this.member = member;
+        this.attributes = attributes;
+    }
+
 
     //해당 Member의 권한을 리턴하는 곳
     @Override
@@ -64,5 +77,16 @@ public class PrincipalDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    @Override
+    public String getName() {
+        return null;
     }
 }

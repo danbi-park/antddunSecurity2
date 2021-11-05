@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 //시큐리티 설정에서 loginProcessingURL("/login");
@@ -13,9 +14,10 @@ import org.springframework.stereotype.Service;
 @Service //메모리에 띄우기
 public class PrincipalDetailsService implements UserDetailsService {
 
+    //함수 종료 시 @AuthenticationPrincipal 어노테이션이 만들어진다.
+
     @Autowired
     private MemberRepository memberRepository;
-
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

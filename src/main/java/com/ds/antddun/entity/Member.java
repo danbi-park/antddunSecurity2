@@ -35,7 +35,17 @@ public class Member {
     @CreationTimestamp
     private LocalDateTime createDateTime;
 
-/*    private boolean fromSocial;
+    public Member(String username, String name, String password, String role, String provider, String providerId, LocalDateTime createDateTime) {
+        this.username = username;
+        this.name = name;
+        this.password = password;
+        this.role = role;
+        this.provider = provider;
+        this.providerId = providerId;
+        this.createDateTime = createDateTime;
+    }
+
+    /*    private boolean fromSocial;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @Builder.Default
