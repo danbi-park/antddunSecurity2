@@ -1,6 +1,9 @@
 package com.ds.antddun.config.oauth;
 
 import com.ds.antddun.config.auth.PrincipalDetails;
+import com.ds.antddun.config.oauth.provider.FacebookUserInfo;
+import com.ds.antddun.config.oauth.provider.GoogleUserInfo;
+import com.ds.antddun.config.oauth.provider.OAuth2UserInfo;
 import com.ds.antddun.entity.Member;
 import com.ds.antddun.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,18 +35,29 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         System.out.println("getAttribute:" + oAuth2User.getAttributes());
 
+        OAuth2UserInfo oAuth2UserInfo = null;
+        if (userRequest.getClientRegistration().getRegistrationId().equals("google")) {
+            System.out.println("구글 로그인 요청");
+            oAuth2UserInfo = new GoogleUserInfo(oAuth2User.getAttributes());
+        } else if (userRequest.getClientRegistration().getRegistrationId().equals("facebook")) {
+            System.out.println("페이스북 로그인 요청");
+            oAuth2UserInfo = new FacebookUserInfo(oAuth2User.getAttributes());
+        } else {
+            System.out.println("우리는 구글과 페이스북만 지원해요");
+        }
+
         //회원가입 시킴
-        String provider = userRequest.getClientRegistration().getClientId(); // google
-        String providerId = oAuth2User.getAttribute("sub");
+        String provider = oAuth2UserInfo.getProvider(); // google
+        String providerId = oAuth2UserInfo.getProviderId();
 //        String username = provider + "_" + providerId; // google_109742856182916427686
-        String username = oAuth2User.getAttribute("email");
-        String name = oAuth2User.getAttribute("name");
-        String password = bCryptPasswordEncoder.encode(providerId); //uuid를 비밀번호로 넣어둠 -> 고유
+        String username = oAuth2UserInfo.getEmail();
+        String name = oAuth2UserInfo.getName();
+        String password = bCryptPasswordEncoder.encode(oAuth2UserInfo.getProviderId()); //uuid를 비밀번호로 넣어둠 -> 고유
         String role = "ROLE_USER";
 
         Member memberEntity = memberRepository.findByUsername(username);
         if (memberEntity == null) {
-            System.out.println("initial google log in.");
+            System.out.println("initial log in.");
             memberEntity = Member.builder()
                     .username(username)
                     .password(password)
@@ -54,7 +68,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                     .build();
             memberRepository.save(memberEntity);
         } else {
-            System.out.println("you have already logged in google");
+            System.out.println("로그인을 한 적이 있습니다.");
         }
         return new PrincipalDetails(memberEntity, oAuth2User.getAttributes());
     }
